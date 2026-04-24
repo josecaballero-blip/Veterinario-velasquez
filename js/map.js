@@ -2,7 +2,7 @@
  * map.js — Mapa Leaflet de Medellín
  * Carga Leaflet de forma lazy solo cuando el mapa entra en viewport.
  */
-import { WA_BASE_URL, DOCTOR_NAME } from './config.js';
+import { WA_BASE_URL, DOCTOR_NAME, MAP_CENTER, ZONES } from './config.js';
 
 function loadLeaflet() {
   return new Promise((resolve) => {
@@ -68,7 +68,7 @@ function setupMap() {
     });
 
     // Marcador principal
-    const marker = L.marker([6.2442, -75.5812], { icon: pawIcon }).addTo(map);
+    const marker = L.marker(MAP_CENTER, { icon: pawIcon }).addTo(map);
     marker.bindPopup(`
       <div style="font-family:'Nunito',sans-serif; padding:4px 6px; min-width:180px;">
         <strong style="font-size:1rem; color:#FF8C42;">🐾 ${DOCTOR_NAME} Velásquez</strong><br/>
@@ -82,22 +82,7 @@ function setupMap() {
       </div>
     `, { maxWidth: 220 }).openPopup();
 
-    // Todas las zonas de cobertura con coordenadas reales
-    const zones = [
-      { name: 'El Poblado',       coords: [6.2086, -75.5665] },
-      { name: 'Laureles',         coords: [6.2490, -75.6000] },
-      { name: 'Envigado',         coords: [6.1732, -75.5870] },
-      { name: 'Sabaneta',         coords: [6.1513, -75.6171] },
-      { name: 'Belén',            coords: [6.2280, -75.6125] },
-      { name: 'Robledo',          coords: [6.2870, -75.5980] },
-      { name: 'Itagüí',           coords: [6.1846, -75.5988] },
-      { name: 'La América',       coords: [6.2468, -75.5960] },
-      { name: 'Buenos Aires',     coords: [6.2310, -75.5620] },
-      { name: 'Bello',            coords: [6.3380, -75.5580] },
-      { name: 'Centro Medellín',  coords: [6.2518, -75.5636] },
-      { name: 'Caldas',           coords: [6.0919, -75.6358] },
-      { name: 'Copacabana',       coords: [6.3496, -75.5076] },
-    ];
+    const allMarkers = [marker];
 
     const smallIcon = L.divIcon({
       className: '',
@@ -110,8 +95,7 @@ function setupMap() {
       iconAnchor: [7, 7]
     });
 
-    const allMarkers = [marker];
-    zones.forEach(zone => {
+    ZONES.forEach(zone => {
       const m = L.marker(zone.coords, { icon: smallIcon })
         .addTo(map)
         .bindPopup(`<strong style="color:#4DB6AC">${zone.name}</strong><br/><small>Zona de cobertura</small>`);
@@ -119,7 +103,7 @@ function setupMap() {
     });
 
     // Círculo de cobertura
-    L.circle([6.2442, -75.5812], {
+    L.circle(MAP_CENTER, {
       radius: 20000,
       color: '#FF8C42',
       fillColor: '#FF8C42',
